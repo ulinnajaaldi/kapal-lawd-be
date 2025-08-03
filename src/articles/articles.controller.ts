@@ -24,6 +24,8 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
+import { SearchArticlesDto } from './dto/search-articles.dto';
+import { ArticleResponseDto } from './dto/article-response.dto';
 import { ArticlesService } from './articles.service';
 import { LikesService } from './likes.service';
 import { ApiResponseDto } from '../common/dto/api-response.dto';
@@ -60,9 +62,23 @@ export class ArticlesController {
     return ApiResponseDto.success(result, 'Article created successfully');
   }
 
-  @ApiOperation({ summary: 'Get all articles' })
-  @ApiResponse({ status: 200, description: 'Articles retrieved successfully' })
+  @ApiOperation({
+    summary: 'Get all articles with optional search and filtering',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Articles retrieved successfully',
+    type: ArticleResponseDto,
+    isArray: true,
+  })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiQuery({
+    name: 'query',
+    required: false,
+    description:
+      'Search query to find articles by title or content (minimum 2 characters)',
+    type: String,
+  })
   @ApiQuery({
     name: 'page',
     required: false,
@@ -75,9 +91,21 @@ export class ArticlesController {
     description: 'Number of items per page (max 100)',
     type: Number,
   })
+  @ApiQuery({
+    name: 'sortBy',
+    required: false,
+    description: 'Sort by field',
+    enum: ['createdAt', 'title', 'updatedAt'],
+  })
+  @ApiQuery({
+    name: 'sortOrder',
+    required: false,
+    description: 'Sort order',
+    enum: ['ASC', 'DESC'],
+  })
   @Get()
-  async findAll(@Query() paginationDto: PaginationDto) {
-    const result = await this.articlesService.findAll(paginationDto);
+  async findAll(@Query() searchDto: SearchArticlesDto) {
+    const result = await this.articlesService.findAll(searchDto);
     return ApiResponseDto.success(result, 'Articles retrieved successfully');
   }
 
