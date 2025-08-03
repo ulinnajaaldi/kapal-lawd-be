@@ -177,4 +177,4 @@ The API uses JWT-based authentication:
 
 ## API Documentation
 
-For detailed API endpoint documentation, see [docs/api.md](docs/api.md)
+For detailed API endpoint documentation, see [docs/api.md](docs/api.md) or import postman collection & environment from `postman` folder.
